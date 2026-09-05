@@ -553,3 +553,35 @@ test("players can be dragged and an edit can be canceled", async ({ page }) => {
     "Sam",
   ]);
 });
+
+test("score action stays docked during the screen entrance", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const deviations = await page.evaluate(async () => {
+    const start = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent?.includes("Los geht’s"),
+    );
+    start!.click();
+    const deviations: number[] = [];
+    const began = performance.now();
+    await new Promise<void>((resolve) => {
+      function sample() {
+        const action = document.querySelector(".game-actions");
+        if (action)
+          deviations.push(
+            Math.abs(
+              action.getBoundingClientRect().bottom - window.innerHeight,
+            ),
+          );
+        if (performance.now() - began < 450) requestAnimationFrame(sample);
+        else resolve();
+      }
+      requestAnimationFrame(sample);
+    });
+    return deviations;
+  });
+  expect(deviations.length).toBeGreaterThan(2);
+  expect(Math.max(...deviations)).toBeLessThan(1);
+});

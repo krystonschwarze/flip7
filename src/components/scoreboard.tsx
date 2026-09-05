@@ -343,15 +343,6 @@ function LoadedScoreboard() {
               />
             ) : (
               <>
-                {selected.length > 1 && (
-                  <button
-                    className="lineup-sort"
-                    onClick={() => setSorting(true)}
-                  >
-                    <Icon name="sort" size={20} />
-                    Reihenfolge ändern
-                  </button>
-                )}
                 <div className="lineup">
                   {selected.map((player, index) => (
                     <div
@@ -382,16 +373,28 @@ function LoadedScoreboard() {
                 </div>
               </>
             )}
-            <button
-              className="add-person"
-              disabled={sorting}
-              onClick={() => setOverlay("people")}
-            >
-              <Icon name="plus" size={19} />
-              {state.profiles.length
-                ? "Personen auswählen"
-                : "Namen hinzufügen"}
-            </button>
+            <div className="lineup-actions">
+              <button
+                className="add-person"
+                disabled={sorting}
+                onClick={() => setOverlay("people")}
+              >
+                <Icon name="plus" size={19} />
+                {state.profiles.length
+                  ? "Personen auswählen"
+                  : "Namen hinzufügen"}
+              </button>
+              {!sorting && selected.length > 1 && (
+                <button
+                  className="icon-button outlined lineup-edit-button"
+                  aria-label="Reihenfolge ändern"
+                  title="Reihenfolge ändern"
+                  onClick={() => setSorting(true)}
+                >
+                  <Icon name="sort" size={22} />
+                </button>
+              )}
+            </div>
             <div className="section-divider" />
             <div className="section-heading">
               <h2>Wie weit spielt ihr?</h2>
