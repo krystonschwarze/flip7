@@ -1,0 +1,14 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+.DS_Store
+.next/
+*.tsbuildinfo
+public/sw.js
+out/
+artifacts/
+inspo/
+.env*
+!.env.example
+next-env.d.ts
