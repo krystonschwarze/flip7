@@ -165,7 +165,6 @@ svg {
   transform: rotate(-8deg);
   color: var(--yellow);
   -webkit-text-stroke: 2px var(--ink);
-  paint-order: stroke fill;
   text-shadow:
     2px 2px 0 var(--coral),
     4px 4px 0 var(--ink),
