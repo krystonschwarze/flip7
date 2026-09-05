@@ -473,3 +473,33 @@ test("long names keep the score action visible and table totals aligned", async 
     .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
   expect(Math.abs(tops[0] - tops[1])).toBeLessThan(1);
 });
+
+test("player order persists and determines the score entry sequence", async ({
+  page,
+}) => {
+  await setup(page);
+  await page.getByRole("button", { name: "Reihenfolge ändern" }).click();
+  await expect(
+    page.getByRole("button", { name: "Alex nach oben" }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "Sam nach oben" }).click();
+  await expect(page.locator(".lineup .person-name")).toHaveText([
+    "Sam",
+    "Alex",
+  ]);
+  await page.reload();
+  await expect(page.locator(".lineup .person-name")).toHaveText([
+    "Sam",
+    "Alex",
+  ]);
+  await page.getByRole("button", { name: "Los geht’s" }).click();
+  await page
+    .getByRole("button", { name: "Punkte eintragen", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog").getByRole("heading", { name: "Sam", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Weiter zu Alex" }),
+  ).toBeVisible();
+});

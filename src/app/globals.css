@@ -391,6 +391,33 @@ svg {
   gap: 8px;
   margin-top: 18px;
 }
+.lineup-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 8px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+.person-row:has(.reorder-buttons) .person-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reorder-buttons {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+.screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .person-row {
   display: flex;
   align-items: center;

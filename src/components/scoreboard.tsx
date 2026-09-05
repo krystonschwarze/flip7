@@ -84,6 +84,8 @@ function LoadedScoreboard() {
   const [screen, setScreen] = useState<"setup" | "game">(
     session.state.game ? "game" : "setup",
   );
+  const [sorting, setSorting] = useState(false);
+  const [sortNotice, setSortNotice] = useState("");
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [editor, setEditor] = useState<Editor | null>(session.editor);
   const [notice, setNotice] = useState("");
@@ -170,6 +172,18 @@ function LoadedScoreboard() {
     .map((id) => state.profiles.find((player) => player.id === id))
     .filter((player): player is Player => !!player);
   const completedDraft = game?.draft.every((score) => score !== null) ?? false;
+
+  function movePlayer(id: string, direction: number) {
+    const current = stateRef.current;
+    const order = [...current.selected];
+    const index = order.indexOf(id);
+    const next = index + direction;
+    if (index < 0 || next < 0 || next >= order.length) return;
+    [order[index], order[next]] = [order[next], order[index]];
+    persist({ ...current, selected: order });
+    const name = current.profiles.find((person) => person.id === id)?.name;
+    setSortNotice(`${name} steht jetzt an Position ${next + 1}.`);
+  }
 
   function start(players = selected, target = state.target) {
     try {
@@ -330,6 +344,19 @@ function LoadedScoreboard() {
               </div>
             </div>
             <p className="subtle">Eure Namen bleiben fürs nächste Mal.</p>
+            {selected.length > 1 && (
+              <button
+                className="lineup-sort"
+                aria-pressed={sorting}
+                onClick={() => setSorting(!sorting)}
+              >
+                <Icon name={sorting ? "check" : "sort"} size={20} />
+                {sorting ? "Reihenfolge fertig" : "Reihenfolge ändern"}
+              </button>
+            )}
+            <span className="screen-reader-only" role="status">
+              {sortNotice}
+            </span>
             <div className="lineup">
               {selected.map((player, index) => (
                 <div
@@ -338,14 +365,37 @@ function LoadedScoreboard() {
                   style={colorStyle(player.color)}
                 >
                   <span className="person-mark">{index + 1}</span>
-                  <span className="person-name">{player.name}</span>
-                  <button
-                    className="icon-button"
-                    aria-label={`${player.name} aus der Runde entfernen`}
-                    onClick={() => togglePlayer(player.id)}
-                  >
-                    <Icon name="close" size={18} />
-                  </button>
+                  <span className="person-name" title={player.name}>
+                    {player.name}
+                  </span>
+                  {sorting ? (
+                    <div className="reorder-buttons">
+                      <button
+                        className="icon-button"
+                        disabled={index === 0}
+                        aria-label={`${player.name} nach oben`}
+                        onClick={() => movePlayer(player.id, -1)}
+                      >
+                        <Icon name="up" size={20} />
+                      </button>
+                      <button
+                        className="icon-button"
+                        disabled={index === selected.length - 1}
+                        aria-label={`${player.name} nach unten`}
+                        onClick={() => movePlayer(player.id, 1)}
+                      >
+                        <Icon name="down" size={20} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="icon-button"
+                      aria-label={`${player.name} aus der Runde entfernen`}
+                      onClick={() => togglePlayer(player.id)}
+                    >
+                      <Icon name="close" size={18} />
+                    </button>
+                  )}
                 </div>
               ))}
               {selected.length === 0 && (
