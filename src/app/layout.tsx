@@ -23,7 +23,7 @@ const title = "Flip 7 · Punkteblock";
 const description =
   "Dein Punkteblock am Spieltisch. Gemeinsam spielen, Punkte festhalten und direkt eine Revanche starten.";
 const socialImage = {
-  url: "/social-preview.png",
+  url: "/social-preview-v2.png",
   width: 1200,
   height: 630,
   alt: "Flip 7. Dein Punkteblock. Logo auf türkisem Hintergrund.",
