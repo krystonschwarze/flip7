@@ -528,6 +528,15 @@ test("players can be dragged and an edit can be canceled", async ({ page }) => {
     target!.y + target!.height / 2,
     { steps: 20 },
   );
+  await expect
+    .poll(async () => {
+      const position = await page
+        .locator(".sortable-person")
+        .filter({ hasText: "Alex" })
+        .boundingBox();
+      return position!.y;
+    })
+    .toBeGreaterThan(target!.y + target!.height / 2);
   await page.mouse.up();
   await expect(page.locator(".lineup .person-name")).toHaveText([
     "Sam",
