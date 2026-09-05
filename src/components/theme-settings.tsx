@@ -6,10 +6,7 @@ import { parseTheme, THEME_KEY, type ThemePreference } from "../theme";
 const themeEvent = "flip7-theme-change";
 
 function applyTheme(preference: ThemePreference) {
-  const dark =
-    preference === "dark" ||
-    (preference === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const dark = preference === "dark";
   document.documentElement.dataset.themePreference = preference;
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document
@@ -29,17 +26,13 @@ function subscribe(listener: () => void) {
 
 export function ThemeSync() {
   useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onSystemChange = () => applyTheme(getPreference());
     const onStorage = (event: StorageEvent) => {
       if (event.key === THEME_KEY || event.key === null)
         applyTheme(parseTheme(event.newValue));
     };
-    media.addEventListener("change", onSystemChange);
     window.addEventListener("storage", onStorage);
-    onSystemChange();
+    applyTheme(getPreference());
     return () => {
-      media.removeEventListener("change", onSystemChange);
       window.removeEventListener("storage", onStorage);
     };
   }, []);
@@ -50,7 +43,7 @@ export function ThemeSettings() {
   const preference = useSyncExternalStore(
     subscribe,
     getPreference,
-    () => "system" as const,
+    () => "light" as const,
   );
   const [saveError, setSaveError] = useState(false);
   function choose(next: ThemePreference) {
@@ -68,7 +61,6 @@ export function ThemeSettings() {
       <div className="theme-options">
         {(
           [
-            ["system", "System"],
             ["light", "Hell"],
             ["dark", "Dunkel"],
           ] as const
@@ -88,9 +80,7 @@ export function ThemeSettings() {
       <p className="theme-hint" role={saveError ? "status" : undefined}>
         {saveError
           ? "Nur für dieses Fenster. Die Auswahl konnte nicht gespeichert werden."
-          : preference === "system"
-            ? "Passt sich der Darstellung deines Geräts an."
-            : "Bleibt unabhängig von deiner Systemeinstellung."}
+          : "Deine Auswahl bleibt auf diesem Gerät gespeichert."}
       </p>
     </fieldset>
   );
