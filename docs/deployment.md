@@ -7,13 +7,7 @@ Repository: https://github.com/krystonschwarze/flip7
 
 Flip 7 verwendet den statischen Next.js-Export. `npm run build` erzeugt `out/` einschließlich Service Worker, Manifest, Icons und lokalen Schriften. Auf dem Server wird ausschließlich ein Webserver für statische Dateien benötigt.
 
-Die Struktur entspricht dem Portfolio-Repository:
-
-| Quellbranch | Auslieferungsbranch | Verwendung                 |
-| ----------- | ------------------- | -------------------------- |
-| `master`    | `production`        | Produktive Subdomain       |
-| `dev`       | `deploy`            | Optionales Staging         |
-| `feature/*` | keiner              | Entwicklung und CI-Prüfung |
+Die Entwicklung erfolgt direkt auf `main`. Der Branch `production` enthält ausschließlich die fertigen Dateien für Plesk. Ein separater Staging-Branch wird nicht verwendet.
 
 GitHub Actions führt Lint, Typecheck, Wertungstests, Build und Browser-Tests aus. Erst nach erfolgreicher Prüfung wird der Auslieferungsbranch aktualisiert. Pull Requests veröffentlichen nichts. Actions sind auf Commit-SHAs festgelegt: checkout 7.0.1, setup-node 7.0.0 und actions-gh-pages 4.1.0.
 
@@ -43,9 +37,9 @@ Die lokale Testadresse und die produktive Subdomain haben getrennte Browserspeic
 
 ## Änderungen veröffentlichen
 
-Änderungen auf `feature/*` entwickeln und prüfen. Vor einem Push die Branch- und Commit-Namen sowie gegebenenfalls den PR-Titel abnehmen lassen. Änderungen zunächst nach `dev` und für die Veröffentlichung nach `master` übernehmen. Dabei die tatsächlichen Schutzregeln der Branches beachten.
+Änderungen direkt auf `main` entwickeln und prüfen. Der Nutzer hat automatische Commits und Pushes für dieses Repository freigegeben. Conventional Commits ohne AI-Attribution verwenden und die tatsächlichen Branch-Schutzregeln beachten.
 
-Vor Veröffentlichungen die Version in `package.json` und `package-lock.json` gemeinsam erhöhen. Generierte Dateien werden ausschließlich durch den Workflow in `deploy` oder `production` geschrieben. Der Service Worker erhält bei jedem Build eine neue Cache-Version.
+Vor Veröffentlichungen die Version in `package.json` und `package-lock.json` gemeinsam erhöhen. GitHub Actions schreibt generierte Dateien nach `production`. Der Service Worker erhält bei jedem Build eine neue Cache-Version.
 
 ## Lokal den Export testen
 
