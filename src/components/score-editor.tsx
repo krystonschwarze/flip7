@@ -4,6 +4,7 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import { totals, type Game } from "../game";
 import { emptyHand, handScore, hasCards, isHand, type Hand } from "../scoring";
 import { colorStyle, Icon, Modal } from "./ui";
+import AnimatedNumber from "./animated-number";
 
 export type Editor = {
   gameId: string;
@@ -155,7 +156,14 @@ export default function ScoreEditor({
           {game.players.map((p, i) => (
             <span key={p.id} className={i === editor.player ? "active" : ""}>
               <span>{p.name}</span>
-              <strong>{scores[i]}</strong>
+              <strong>
+                <AnimatedNumber
+                  value={
+                    scores[i] +
+                    (editor.round === null ? (game.draft[i] ?? 0) : 0)
+                  }
+                />
+              </strong>
             </span>
           ))}
         </div>

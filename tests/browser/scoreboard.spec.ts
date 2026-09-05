@@ -246,6 +246,13 @@ test("card input computes bonuses, persists the hand and completes directly in t
   await expect(
     page.getByRole("heading", { name: "Sam", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.locator(".editor-totals > span").first().locator("strong"),
+  ).toHaveText("67");
+  await page.reload();
+  await expect(
+    page.locator(".editor-totals > span").first().locator("strong"),
+  ).toHaveText("67");
   await page.getByRole("button", { name: "Karte 12", exact: true }).click();
   await page
     .getByRole("button", { name: "Runde abschließen", exact: true })
@@ -253,6 +260,12 @@ test("card input computes bonuses, persists the hand and completes directly in t
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "Runde 2", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", {
+      name: "Alex, 67 Punkte, Punkte eintragen",
+      exact: true,
+    }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Runde 1, Alex: 67 Punkte bearbeiten" })
