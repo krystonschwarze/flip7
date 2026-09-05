@@ -1,5 +1,7 @@
 "use client";
 
+import BrandLettering from "./brand-lettering";
+
 import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
 
 export const colors = [
@@ -106,9 +108,7 @@ export function Brand({ small = false }: { small?: boolean }) {
           <i />
         </div>
       )}
-      <span className="brand-title" aria-hidden="true">
-        FLIP<span>7</span>
-      </span>
+      <BrandLettering />
       {!small && <div className="brand-ribbon">Dein Punkteblock.</div>}
     </div>
   );
