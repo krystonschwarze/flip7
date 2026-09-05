@@ -19,10 +19,36 @@ const body = localFont({
   display: "swap",
 });
 
+const title = "Flip 7 · Punkteblock";
+const description =
+  "Dein Punkteblock am Spieltisch. Gemeinsam spielen, Punkte festhalten und direkt eine Revanche starten.";
+const socialImage = {
+  url: "/social-preview.png",
+  width: 1200,
+  height: 630,
+  alt: "Flip 7. Dein Punkteblock. Logo auf türkisem Hintergrund.",
+};
+
 export const metadata: Metadata = {
-  title: "Flip 7 · Punkteblock",
-  description:
-    "Dein Punkteblock am Spieltisch. Gemeinsam spielen, Punkte festhalten und direkt eine Revanche starten.",
+  metadataBase: new URL("https://flip7.krystonschwarze.com"),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    url: "/",
+    siteName: "Flip 7 Punkteblock",
+    title,
+    description,
+    images: [socialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [socialImage],
+  },
+  title,
+  description,
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Flip 7" },
   icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
