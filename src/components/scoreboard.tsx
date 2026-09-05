@@ -22,6 +22,7 @@ import { Brand, colorStyle, Icon, Modal } from "./ui";
 import { ThemeSettings } from "./theme-settings";
 import PeopleModal from "./people-modal";
 import PlayerCards from "./player-cards";
+import SortableLineup from "./sortable-lineup";
 import ScoreEditor, { restoreEditor, type Editor } from "./score-editor";
 import { emptyHand, type Hand } from "../scoring";
 
@@ -85,7 +86,6 @@ function LoadedScoreboard() {
     session.state.game ? "game" : "setup",
   );
   const [sorting, setSorting] = useState(false);
-  const [sortNotice, setSortNotice] = useState("");
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [editor, setEditor] = useState<Editor | null>(session.editor);
   const [notice, setNotice] = useState("");
@@ -172,18 +172,6 @@ function LoadedScoreboard() {
     .map((id) => state.profiles.find((player) => player.id === id))
     .filter((player): player is Player => !!player);
   const completedDraft = game?.draft.every((score) => score !== null) ?? false;
-
-  function movePlayer(id: string, direction: number) {
-    const current = stateRef.current;
-    const order = [...current.selected];
-    const index = order.indexOf(id);
-    const next = index + direction;
-    if (index < 0 || next < 0 || next >= order.length) return;
-    [order[index], order[next]] = [order[next], order[index]];
-    persist({ ...current, selected: order });
-    const name = current.profiles.find((person) => person.id === id)?.name;
-    setSortNotice(`${name} steht jetzt an Position ${next + 1}.`);
-  }
 
   function start(players = selected, target = state.target) {
     try {
@@ -344,69 +332,61 @@ function LoadedScoreboard() {
               </div>
             </div>
             <p className="subtle">Eure Namen bleiben fürs nächste Mal.</p>
-            {selected.length > 1 && (
-              <button
-                className="lineup-sort"
-                aria-pressed={sorting}
-                onClick={() => setSorting(!sorting)}
-              >
-                <Icon name={sorting ? "check" : "sort"} size={20} />
-                {sorting ? "Reihenfolge fertig" : "Reihenfolge ändern"}
-              </button>
-            )}
-            <span className="screen-reader-only" role="status">
-              {sortNotice}
-            </span>
-            <div className="lineup">
-              {selected.map((player, index) => (
-                <div
-                  className="person-row"
-                  key={player.id}
-                  style={colorStyle(player.color)}
-                >
-                  <span className="person-mark">{index + 1}</span>
-                  <span className="person-name" title={player.name}>
-                    {player.name}
-                  </span>
-                  {sorting ? (
-                    <div className="reorder-buttons">
+            {sorting ? (
+              <SortableLineup
+                players={selected}
+                onCancel={() => setSorting(false)}
+                onSave={(ids) => {
+                  persist({ ...stateRef.current, selected: ids });
+                  setSorting(false);
+                }}
+              />
+            ) : (
+              <>
+                {selected.length > 1 && (
+                  <button
+                    className="lineup-sort"
+                    onClick={() => setSorting(true)}
+                  >
+                    <Icon name="sort" size={20} />
+                    Reihenfolge ändern
+                  </button>
+                )}
+                <div className="lineup">
+                  {selected.map((player, index) => (
+                    <div
+                      className="person-row"
+                      key={player.id}
+                      style={colorStyle(player.color)}
+                    >
+                      <span className="person-mark">{index + 1}</span>
+                      <span className="person-name" title={player.name}>
+                        {player.name}
+                      </span>
                       <button
                         className="icon-button"
-                        disabled={index === 0}
-                        aria-label={`${player.name} nach oben`}
-                        onClick={() => movePlayer(player.id, -1)}
+                        aria-label={`${player.name} aus der Runde entfernen`}
+                        onClick={() => togglePlayer(player.id)}
                       >
-                        <Icon name="up" size={20} />
-                      </button>
-                      <button
-                        className="icon-button"
-                        disabled={index === selected.length - 1}
-                        aria-label={`${player.name} nach unten`}
-                        onClick={() => movePlayer(player.id, 1)}
-                      >
-                        <Icon name="down" size={20} />
+                        <Icon name="close" size={18} />
                       </button>
                     </div>
-                  ) : (
-                    <button
-                      className="icon-button"
-                      aria-label={`${player.name} aus der Runde entfernen`}
-                      onClick={() => togglePlayer(player.id)}
-                    >
-                      <Icon name="close" size={18} />
-                    </button>
+                  ))}
+                  {selected.length === 0 && (
+                    <div className="lineup-empty">
+                      <span className="empty-person">1</span>
+                      <span className="empty-person">2</span>
+                      <p>Zu zweit oder in großer Runde.</p>
+                    </div>
                   )}
                 </div>
-              ))}
-              {selected.length === 0 && (
-                <div className="lineup-empty">
-                  <span className="empty-person">1</span>
-                  <span className="empty-person">2</span>
-                  <p>Zu zweit oder in großer Runde.</p>
-                </div>
-              )}
-            </div>
-            <button className="add-person" onClick={() => setOverlay("people")}>
+              </>
+            )}
+            <button
+              className="add-person"
+              disabled={sorting}
+              onClick={() => setOverlay("people")}
+            >
               <Icon name="plus" size={19} />
               {state.profiles.length
                 ? "Personen auswählen"
@@ -446,7 +426,7 @@ function LoadedScoreboard() {
             <div className="setup-actions">
               <button
                 className="button primary"
-                disabled={selected.length < 2}
+                disabled={selected.length < 2 || sorting}
                 onClick={() =>
                   game && !done ? setOverlay("replace") : start()
                 }

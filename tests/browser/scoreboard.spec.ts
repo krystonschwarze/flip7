@@ -479,14 +479,16 @@ test("player order persists and determines the score entry sequence", async ({
 }) => {
   await setup(page);
   await page.getByRole("button", { name: "Reihenfolge ändern" }).click();
-  await expect(
-    page.getByRole("button", { name: "Alex nach oben" }),
-  ).toBeDisabled();
-  await page.getByRole("button", { name: "Sam nach oben" }).click();
+  const handle = page.getByRole("button", { name: "Sam verschieben" });
+  await handle.focus();
+  await page.keyboard.press("Space");
+  await page.keyboard.press("ArrowUp");
+  await page.keyboard.press("Space");
   await expect(page.locator(".lineup .person-name")).toHaveText([
     "Sam",
     "Alex",
   ]);
+  await page.getByRole("button", { name: "Fertig", exact: true }).click();
   await page.reload();
   await expect(page.locator(".lineup .person-name")).toHaveText([
     "Sam",
@@ -502,4 +504,43 @@ test("player order persists and determines the score entry sequence", async ({
   await expect(
     page.getByRole("button", { name: "Weiter zu Alex" }),
   ).toBeVisible();
+});
+
+test("players can be dragged and an edit can be canceled", async ({ page }) => {
+  await setup(page);
+  await page.getByRole("button", { name: "Reihenfolge ändern" }).click();
+  const source = page.getByRole("button", { name: "Sam verschieben" });
+  await source.scrollIntoViewIfNeeded();
+  const start = await source.boundingBox();
+  const target = await page.locator(".sortable-person").first().boundingBox();
+  await page.mouse.move(
+    start!.x + start!.width / 2,
+    start!.y + start!.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    start!.x + start!.width / 2,
+    start!.y + start!.height / 2 - 12,
+    { steps: 4 },
+  );
+  await page.mouse.move(
+    start!.x + start!.width / 2,
+    target!.y + target!.height / 2,
+    { steps: 20 },
+  );
+  await page.mouse.up();
+  await expect(page.locator(".lineup .person-name")).toHaveText([
+    "Sam",
+    "Alex",
+  ]);
+  await page.getByRole("button", { name: "Abbrechen", exact: true }).click();
+  await expect(page.locator(".lineup .person-name")).toHaveText([
+    "Alex",
+    "Sam",
+  ]);
+  await page.reload();
+  await expect(page.locator(".lineup .person-name")).toHaveText([
+    "Alex",
+    "Sam",
+  ]);
 });

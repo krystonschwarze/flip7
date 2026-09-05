@@ -23,6 +23,7 @@ export function Icon({ name, size = 24 }: { name: string; size?: number }) {
     back: <path d="m14 6-6 6 6 6" />,
     up: <path d="m6 14 6-6 6 6" />,
     down: <path d="m6 10 6 6 6-6" />,
+    grip: <path d="M8 5h.01M16 5h.01M8 12h.01M16 12h.01M8 19h.01M16 19h.01" />,
     sort: <path d="M8 20V4m-4 4 4-4 4 4M16 4v16m-4-4 4 4 4-4" />,
     next: <path d="m10 6 6 6-6 6" />,
     arrow: <path d="M4 12h16m-6-6 6 6-6 6" />,

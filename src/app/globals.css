@@ -400,23 +400,36 @@ svg {
   font-weight: 700;
   border-radius: 6px;
 }
-.person-row:has(.reorder-buttons) .person-name {
+.lineup-edit {
+  margin-top: 14px;
+}
+.lineup-edit-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lineup-edit-toolbar .button {
+  min-height: 44px;
+  padding: 8px 14px;
+}
+.sortable-person .person-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.reorder-buttons {
-  display: flex;
-  flex-shrink: 0;
-  gap: 4px;
+.sortable-person.dragging {
+  border-color: var(--current-score);
+  box-shadow: 3px 5px 0 var(--shadow);
+  z-index: 10;
 }
-.screen-reader-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+.drag-handle {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 .person-row {
   display: flex;
