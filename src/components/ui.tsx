@@ -40,9 +40,10 @@ export function Icon({ name, size = 24 }: { name: string; size?: number }) {
         <path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" />
       </>
     ),
-    menu: (
+    settings: (
       <>
-        <path d="M4 6h16M4 12h16M4 18h16" />
+        <path d="m9 3-.5 2.5-2 1.2L4 6l-2 3 2 1.8v2.4L2 15l2 3 2.5-.7 2 1.2L9 21h6l.5-2.5 2-1.2 2.5.7 2-3-2-1.8v-2.4L22 9l-2-3-2.5.7-2-1.2L15 3z" />
+        <circle cx="12" cy="12" r="3" />
       </>
     ),
     cards: (

@@ -19,6 +19,7 @@ import {
 } from "../game";
 import { Brand, colorStyle, Icon, Modal } from "./ui";
 
+import { ThemeSettings } from "./theme-settings";
 import PeopleModal from "./people-modal";
 import PlayerCards from "./player-cards";
 import ScoreEditor, { restoreEditor, type Editor } from "./score-editor";
@@ -321,10 +322,10 @@ function LoadedScoreboard() {
                 <span className="count-tag">{selected.length} / 18</span>
                 <button
                   className="icon-button"
-                  aria-label="Menü öffnen"
+                  aria-label="Einstellungen öffnen"
                   onClick={() => setOverlay("menu")}
                 >
-                  <Icon name="menu" />
+                  <Icon name="settings" />
                 </button>
               </div>
             </div>
@@ -640,18 +641,8 @@ function LoadedScoreboard() {
         />
       )}
       {overlay === "menu" && (
-        <Modal title="Dein Punkteblock" onClose={() => setOverlay(null)}>
+        <Modal title="Einstellungen" onClose={() => setOverlay(null)}>
           <div className="menu-list">
-            <button
-              onClick={() => {
-                setOverlay(null);
-                setScreen("setup");
-              }}
-            >
-              <Icon name="cards" />
-              <span>Spielstart & Besetzung</span>
-              <Icon name="arrow" size={18} />
-            </button>
             <button onClick={() => setOverlay("people")}>
               <Icon name="edit" />
               <span>Gespeicherte Namen</span>
@@ -663,6 +654,7 @@ function LoadedScoreboard() {
               <Icon name="arrow" size={18} />
             </button>
           </div>
+          <ThemeSettings />
           <p className="local-note">
             <Icon name="lock" size={17} />
             Namen und Spielstand bleiben auf diesem Gerät.

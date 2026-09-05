@@ -59,13 +59,13 @@ const scenarios = [
   [
     "settings",
     state(2, null),
-    async (p) => p.getByRole("button", { name: "Menü öffnen" }).click(),
+    async (p) => p.getByRole("button", { name: "Einstellungen öffnen" }).click(),
   ],
   [
     "help",
     state(2, null),
     async (p) => {
-      await p.getByRole("button", { name: "Menü öffnen" }).click();
+      await p.getByRole("button", { name: "Einstellungen öffnen" }).click();
       await p.getByRole("button", { name: "So funktioniert’s" }).click();
     },
   ],

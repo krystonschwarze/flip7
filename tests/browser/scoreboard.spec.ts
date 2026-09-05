@@ -133,7 +133,7 @@ test("name presets, custom target, unfinished keypad and narrow layouts", async 
   expect(width.content).toBeLessThanOrEqual(width.viewport);
   await page.getByRole("button", { name: "Schließen", exact: true }).click();
   await page.getByRole("link", { name: "Zum Spielstart" }).click();
-  await page.getByRole("button", { name: "Menü öffnen" }).click();
+  await page.getByRole("button", { name: "Einstellungen öffnen" }).click();
   await page.getByRole("button", { name: "Gespeicherte Namen" }).click();
   await page.getByRole("button", { name: "Alex bearbeiten" }).click();
   await page.getByLabel("Name bearbeiten", { exact: true }).fill("Alexa");
@@ -302,7 +302,7 @@ test("settings open as a sheet, sheets drag closed and multiple players scroll s
   page,
 }, testInfo) => {
   await setup(page);
-  await page.getByRole("button", { name: "Menü öffnen" }).click();
+  await page.getByRole("button", { name: "Einstellungen öffnen" }).click();
   const menu = await page.getByRole("dialog").boundingBox();
   expect(menu!.y).toBeGreaterThan(100);
   await expect(
@@ -338,9 +338,9 @@ test("settings open as a sheet, sheets drag closed and multiple players scroll s
   }
   await page.getByRole("button", { name: "Auswahl übernehmen" }).click();
   await page.getByRole("button", { name: "Los geht’s" }).click();
-  await expect(page.getByRole("button", { name: "Menü öffnen" })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("button", { name: "Einstellungen öffnen" }),
+  ).toHaveCount(0);
   const cards = page.locator(".score-cards");
   const box = await cards.boundingBox();
   if (page.viewportSize()!.width < 650) {
