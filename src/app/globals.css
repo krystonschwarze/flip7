@@ -1316,12 +1316,18 @@ td button:hover {
 }
 .picker-heading {
   display: flex;
+  align-items: center;
+  gap: 12px;
   justify-content: space-between;
   font-size: 13px;
   font-weight: 600;
   margin: 0 0 7px;
 }
-.picker-heading > span + span {
+.picker-label {
+  display: grid;
+  gap: 1px;
+}
+.picker-label > span + span {
   color: var(--muted);
   font-weight: 600;
 }
@@ -1367,16 +1373,18 @@ td button:hover {
 }
 .bonus-cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
   margin-top: 10px;
 }
 .bonus-cards button {
   min-height: 44px;
+  min-width: 0;
+  padding: 0 2px;
   border: 1.5px solid #ac8591;
   border-radius: 6px;
   background: #fae4c5;
-  font: 700 25px var(--display);
+  font: 700 21px var(--display);
 }
 .bonus-cards button[aria-pressed="true"] {
   background: var(--coral);
@@ -1387,16 +1395,25 @@ td button:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 5px;
-  min-height: 48px;
+  gap: 12px;
+  min-height: 44px;
   font-size: 13px;
   font-weight: 600;
   margin-top: 8px;
-  padding-bottom: 6px;
+  padding: 8px 0 12px;
+  border-top: 1px solid var(--line);
+}
+.calculation-label {
+  color: var(--muted);
+}
+.calculation-value {
+  text-align: right;
+  font-weight: 700;
 }
 .bust-toggle {
   border-radius: 6px;
-  min-height: 40px;
+  min-height: 44px;
+  flex-shrink: 0;
   padding: 6px 12px;
   font-size: 13px;
   min-width: 106px;
@@ -1408,7 +1425,7 @@ td button:hover {
 }
 
 .keypad .bust-key.selected,
-.picker-summary .bust-toggle.selected {
+.card-picker .bust-toggle.selected {
   background: var(--ink);
   color: var(--paper);
 }

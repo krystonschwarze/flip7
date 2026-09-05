@@ -275,8 +275,23 @@ export default function ScoreEditor({
             className="card-picker mode-enter"
           >
             <div className="picker-heading">
-              <span>Zahlenkarten</span>
-              <span>{editor.hand.numbers.length} von 7</span>
+              <div className="picker-label">
+                <span>Zahlenkarten</span>
+                <span>{editor.hand.numbers.length} von 7</span>
+              </div>
+              <button
+                className={`bust-toggle ${editor.hand.bust ? "selected" : ""}`}
+                aria-label="Verzockt"
+                aria-pressed={editor.hand.bust}
+                onClick={() =>
+                  onChange({
+                    ...editor,
+                    hand: { ...editor.hand, bust: !editor.hand.bust },
+                  })
+                }
+              >
+                Verzockt
+              </button>
             </div>
             <div className="number-cards">
               {Array.from({ length: 13 }, (_, n) => (
@@ -366,24 +381,12 @@ export default function ScoreEditor({
             className="picker-summary"
             title="Erst Zahlen verdoppeln, danach Pluskarten und Flip-7-Bonus addieren."
           >
-            <span>
+            <span className="calculation-label">Berechnung</span>
+            <span className="calculation-value">
               {editor.hand.bust
                 ? "Diese Runde zählt 0."
                 : `${numberSum}${editor.hand.doubled ? " × 2" : ""}${bonusSum ? ` + ${bonusSum}` : ""}${editor.hand.numbers.length === 7 ? " + 15" : ""} = ${value || 0}`}
             </span>
-            <button
-              className={`bust-toggle ${editor.hand.bust ? "selected" : ""}`}
-              aria-label="Verzockt"
-              aria-pressed={editor.hand.bust}
-              onClick={() =>
-                onChange({
-                  ...editor,
-                  hand: { ...editor.hand, bust: !editor.hand.bust },
-                })
-              }
-            >
-              Verzockt
-            </button>
           </div>
         )}
         <button className="button primary" disabled={!canSave} onClick={submit}>
