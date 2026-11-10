@@ -62,9 +62,13 @@ jobs:
         run: npm run deploy
       - name: Check the live site
         run: |
-          for path in / /sw.js /manifest.webmanifest; do
+          for attempt in $(seq 1 30); do
+            curl -fsS https://flip7.krystonschwarze.com/sw.js | cmp -s - out/sw.js && break
+            [ "$attempt" = 30 ] && { echo "The edge still serves another sw.js" >&2; exit 1; }
+            sleep 2
+          done
+          for path in / /manifest.webmanifest; do
             curl -fsS -o /dev/null "https://flip7.krystonschwarze.com$path"
           done
-          curl -fsS https://flip7.krystonschwarze.com/sw.js | cmp - out/sw.js
       - if: failure() && steps.deploy.outcome == 'success'
         run: npx wrangler rollback --yes --message "Live check failed for ${{ github.sha }}"
