@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "flip7",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "out",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [{ "pattern": "flip7.krystonschwarze.com/*", "zone_name": "krystonschwarze.com" }],
+  "workers_dev": false,
+  "preview_urls": false
+}

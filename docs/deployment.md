@@ -1,28 +1,19 @@
-# GitHub und Server-Deployment
+# GitHub und Cloudflare-Deployment
 
 Zieladresse: https://flip7.krystonschwarze.com
 Repository: https://github.com/krystonschwarze/flip7
 
 ## Aufbau
 
-Flip 7 verwendet den statischen Next.js-Export. `npm run build` erzeugt `out/` einschließlich Service Worker, Manifest, Icons und lokalen Schriften. Auf dem Server wird ausschließlich ein Webserver für statische Dateien benötigt.
+Flip 7 verwendet den statischen Next.js-Export. `npm run build` erzeugt `out/` einschließlich Service Worker, Manifest, Icons und lokalen Schriften. Seit 2026-11-10 liefert Cloudflare die Dateien als Workers Static Assets aus, im selben Account wie krystonschwarze.com und coolicons.cool (Worker `flip7`, `wrangler.jsonc`). Der Worker führt keinen eigenen Code aus, Anfragen sind kostenlos und zählen nicht gegen das gemeinsame Worker-Limit des Accounts.
 
-Die Entwicklung erfolgt direkt auf `main`. Der Branch `production` enthält ausschließlich die fertigen Dateien für Plesk. Ein separater Staging-Branch wird nicht verwendet.
+Die Entwicklung erfolgt direkt auf `main`. Ein separater Staging-Branch wird nicht verwendet. Der frühere Branch `production` mit den Dateien für Plesk wird nicht mehr aktualisiert.
 
-GitHub Actions führt Lint, Typecheck, Wertungstests, Build und Browser-Tests aus. Erst nach erfolgreicher Prüfung wird der Auslieferungsbranch aktualisiert. Pull Requests veröffentlichen nichts. Actions sind auf Commit-SHAs festgelegt: checkout 7.0.1, setup-node 7.0.0 und actions-gh-pages 4.1.0.
+GitHub Actions führt Lint, Typecheck, Wertungstests, Build und Browser-Tests aus. Erst danach deployt der Job `deploy` mit Wrangler und prüft die Live-Seite, auch ob `/sw.js` dem Build entspricht. Scheitert die Prüfung, rollt `wrangler rollback` auf die vorige Version zurück. Pull Requests veröffentlichen nichts. Secrets: `CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID`.
 
-Der Publish-Job verwendet das repository-eigene `GITHUB_TOKEN` mit Schreibrecht auf Inhalte. Server-Zugangsdaten werden nicht benötigt. Wie beim Portfolio stellt dieser Workflow Dateien im Git-Branch bereit. Er konfiguriert weder DNS noch den Webserver und überträgt keine Dateien direkt per SSH oder FTP.
+`public/_headers` setzt HSTS und für `/_next/static/` `Cache-Control: public, max-age=31536000, immutable`. Alle anderen Dateien, also auch `/sw.js`, `/` und `/manifest.webmanifest`, liefert Cloudflare mit `public, max-age=0, must-revalidate` aus. `/index.html` leitet auf `/` um.
 
-## Server einrichten
-
-1. Die Subdomain `flip7.krystonschwarze.com` im Hosting anlegen und auf den vorgesehenen Webspace zeigen lassen.
-2. Ein HTTPS-Zertifikat für die Subdomain aktivieren und HTTP auf HTTPS umleiten.
-3. Ein eigenes, leeres Dokumentenverzeichnis für Flip 7 verwenden.
-4. In der Git-Anbindung des Hostings das öffentliche Repository und Branch `production` auswählen. Alternativ dessen Dateien in das Dokumentenverzeichnis übernehmen.
-5. Den Inhalt des Branches direkt ausliefern. `index.html` muss im Dokumentenverzeichnis liegen, nicht in einem weiteren `out`-Unterordner. Es ist kein Build-Kommando auf dem Server nötig.
-6. Den automatischen Abruf nach GitHub-Updates entsprechend der vorhandenen Hosting-Einrichtung aktivieren. Falls das Hosting einen Webhook benötigt, dessen URL dort erzeugen und anschließend im GitHub-Repository hinterlegen.
-
-`/sw.js`, `/index.html` und `/manifest.webmanifest` sollten mit `Cache-Control: no-cache` ausgeliefert werden. Dateien unter `/_next/static/` besitzen versionierte Namen und können langfristig mit `Cache-Control: public, max-age=31536000, immutable` gecacht werden. Diese Header werden im Webserver oder Hosting-Panel konfiguriert.
+Von Hand: `npm run build`, dann `npm run deploy` mit `CLOUDFLARE_ACCOUNT_ID` und `CLOUDFLARE_API_TOKEN`. Rollback: `npx wrangler deployments list`, dann `npx wrangler rollback <version-id>`.
 
 Die App erwartet die Wurzel einer eigenen Domain oder Subdomain. Ein Unterverzeichnis wie `/flip7/` ist nicht konfiguriert.
 
@@ -39,7 +30,7 @@ Die lokale Testadresse und die produktive Subdomain haben getrennte Browserspeic
 
 Änderungen direkt auf `main` entwickeln und prüfen. Der Nutzer hat automatische Commits und Pushes für dieses Repository freigegeben. Conventional Commits ohne AI-Attribution verwenden und die tatsächlichen Branch-Schutzregeln beachten.
 
-Vor Veröffentlichungen die Version in `package.json` und `package-lock.json` gemeinsam erhöhen. GitHub Actions schreibt generierte Dateien nach `production`. Der Service Worker erhält bei jedem Build eine neue Cache-Version.
+Vor Veröffentlichungen die Version in `package.json` und `package-lock.json` gemeinsam erhöhen. Jeder Push auf `main` deployt nach bestandenen Prüfungen. Der Service Worker erhält bei jedem Build eine neue Cache-Version.
 
 ## Lokal den Export testen
 

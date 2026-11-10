@@ -34,13 +34,18 @@ jobs:
       - run: npx playwright install --with-deps webkit chrome
       - run: npm run test:e2e
 
-  publish:
+  deploy:
     needs: verify
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: write
+    environment:
+      name: production
+      url: https://flip7.krystonschwarze.com
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: false
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -53,10 +58,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Publish static files
-        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
-          publish_branch: production
-          enable_jekyll: false
+      - id: deploy
+        run: npm run deploy
+      - name: Check the live site
+        run: |
+          for path in / /sw.js /manifest.webmanifest; do
+            curl -fsS -o /dev/null "https://flip7.krystonschwarze.com$path"
+          done
+          curl -fsS https://flip7.krystonschwarze.com/sw.js | cmp - out/sw.js
+      - if: failure() && steps.deploy.outcome == 'success'
+        run: npx wrangler rollback --yes --message "Live check failed for ${{ github.sha }}"
