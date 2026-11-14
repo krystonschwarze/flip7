@@ -14,4 +14,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Der Nutzer erlaubt für dieses Repository ausdrücklich automatische Commits und Pushes nach sinnvollen, geprüften Änderungen. Keine erneute Namensabnahme nötig. Diese Projektregel ersetzt hier die globale Freigabe vor jedem Push.
 - Conventional Commits verwenden. Keine AI- oder Agent-Attribution, keine Co-Authored-By-Trailer und keine Generated-with-Zeilen in der Git-Historie.
 - Tatsächliche Branch-Schutzregeln weiterhin beachten und niemals umgehen.
-- GitHub Actions prüft `main` und veröffentlicht den statischen Export nach `production`. Plesk bezieht ausschließlich diesen Auslieferungsbranch.
+- GitHub Actions prüft `main` und deployt den statischen Export mit Wrangler auf Cloudflare, siehe `docs/deployment.md`.

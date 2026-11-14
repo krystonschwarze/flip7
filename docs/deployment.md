@@ -7,7 +7,7 @@ Repository: https://github.com/krystonschwarze/flip7
 
 Flip 7 verwendet den statischen Next.js-Export. `npm run build` erzeugt `out/` einschließlich Service Worker, Manifest, Icons und lokalen Schriften. Seit 2026-11-10 liefert Cloudflare die Dateien als Workers Static Assets aus, im selben Account wie krystonschwarze.com und coolicons.cool (Worker `flip7`, `wrangler.jsonc`). Der Worker führt keinen eigenen Code aus, Anfragen sind kostenlos und zählen nicht gegen das gemeinsame Worker-Limit des Accounts.
 
-Die Entwicklung erfolgt direkt auf `main`. Ein separater Staging-Branch wird nicht verwendet. Der frühere Branch `production` mit den Dateien für Plesk wird nicht mehr aktualisiert.
+Die Entwicklung erfolgt direkt auf `main`. Ein separater Staging-Branch wird nicht verwendet. Der frühere Branch `production` mit den Dateien für Plesk ist seit 2026-11-14 gelöscht, Netcup wird nicht mehr genutzt.
 
 GitHub Actions führt Lint, Typecheck, Wertungstests, Build und Browser-Tests aus. Erst danach deployt der Job `deploy` mit Wrangler und prüft die Live-Seite, auch ob `/sw.js` dem Build entspricht. Scheitert die Prüfung, rollt `wrangler rollback` auf die vorige Version zurück. Pull Requests veröffentlichen nichts. Secrets: `CLOUDFLARE_API_TOKEN` und `CLOUDFLARE_ACCOUNT_ID`.
 
